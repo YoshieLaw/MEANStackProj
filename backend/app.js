@@ -2,13 +2,15 @@
 const express = require('express');
 const app = express();
 const mongoose = require('./database/mongoose');
+const bodyParser = require('body-parser');
 
 // import models that hold data in mongoDB
 const List = require('./database/models/list');
 const Task = require('./database/models/task');
 
 // tells express to use JSON
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 
 // enable CORS, cross origin request security
@@ -21,11 +23,6 @@ app.use((req, res, next) => {
 
 // create the routes, which are the URL endpoints
 // GET ENDPOINT
-app.get('/lists', (req, res) => {
-    List.find({})
-        .then(list => res.send(list))
-        .catch((error) => console.log(error));
-});
 
 /**
  *  Other way of using et endpoint with using async and await
@@ -36,16 +33,23 @@ app.get('/lists', (req, res) => {
    });
  */
 
-app.get('/lists/:listId', (req, res) => {
-        const listId = req.params.listId 
+app.get('/lists/', (req, res) => {
+        const listID = req.query.listID
 
-        List.find({_id: req.params.listId})
-        .then((list) => res.send(list))
-        .catch((error) => console.log(error));
+        if (typeof listID === 'undefined') {
+                List.find({})
+                        .then(list => res.send(list))
+                        .catch((error) => console.log(error));
+        } else {
+                List.find({_id: listID})
+                .then((list) => res.send(list))
+                .catch((error) => console.log(error));
+        }
+        
 })
 
-app.get('/test/:x', (req, res) => {
-        console.log('This is the param', req.params.x);
+app.get('/test', (req, res) => {
+        res.send('id: ' + req.query.id);
 })
 
 // POST ENDPOINT
