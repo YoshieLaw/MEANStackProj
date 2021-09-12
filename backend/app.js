@@ -24,13 +24,28 @@ app.use((req, res, next) => {
 app.get('/lists', (req, res) => {
     List.find({})
         .then(list => res.send(list))
-        .catch((error) => console.log(error)); 
+        .catch((error) => console.log(error));
 });
 
-app.get('list/:listId', (req, res) => {
+/**
+ *  Other way of using et endpoint with using async and await
+ * 
+ * app.get('/lists', async (req, res) => {
+        const list = await List.find({});
+        res.send(list);
+   });
+ */
+
+app.get('/lists/:listId', (req, res) => {
+        const listId = req.params.listId 
+
         List.find({_id: req.params.listId})
         .then((list) => res.send(list))
         .catch((error) => console.log(error));
+})
+
+app.get('/test/:x', (req, res) => {
+        console.log('This is the param', req.params.x);
 })
 
 // POST ENDPOINT
@@ -42,7 +57,7 @@ app.post('/lists', (req, res) => {
 })
 
 // PUT/PATCH ENDPOINT (for updating data)
-app.patch('list/:listId', (req, res) => {
+app.patch('/list/:listId', (req, res) => {
         List.findOneAndUpdate({'_id' : req.params.listId}, {$set: req.body})
         .then((list) => res.send(list))
         .catch((error) => console.log(error));
