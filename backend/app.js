@@ -48,9 +48,6 @@ app.get('/lists/', (req, res) => {
         
 })
 
-app.get('/test', (req, res) => {
-        res.send('id: ' + req.query.id);
-})
 
 // POST ENDPOINT
 app.post('/lists', (req, res) => {
@@ -61,10 +58,17 @@ app.post('/lists', (req, res) => {
 })
 
 // PUT/PATCH ENDPOINT (for updating data)
-app.patch('/list/:listId', (req, res) => {
-        List.findOneAndUpdate({'_id' : req.params.listId}, {$set: req.body})
-        .then((list) => res.send(list))
-        .catch((error) => console.log(error));
+app.put('/lists', async (req, res) => {
+        const listID = req.query.listID
+
+        if (typeof listID === 'undefined') {
+                res.status(404).send('listID param not found');
+                
+        } else {
+                const list = await List.findOneAndUpdate({'_id' : req.query.listID}, {'title': req.body.title})
+                res.send(list);
+        }
+        
 })
 
 
